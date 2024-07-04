@@ -1,42 +1,45 @@
-let questions = [];
+const questions = [
+    {
+        question: "Szyb kablowy jest to zgodnie z treścią definicji zawartej w zaktualizowanej w 2014 r. Normie Stowarzyszenia Elektryków Polskich N SEP-E 004 pt. „Elektroenergetyczne i sygnalizacyjne linie kablowe. Projektowanie i budowa” obudowane przejście przeznaczone do ułożenia w nim kabli łączące więcej niż:",
+        options: ["dwie kondygnacje budynku", "trzy kondygnacje budynku", "pięć kondygnacji budynku"],
+        correct: 0,
+        explanation: "1.3.14 Szyb kablowy - Wydzielony obudowany pionowy przepust łączący więcej niż dwie kondygnacje budynku przeznaczony do ułożenia w nim kabli."
+    },
+    {
+        question: "Przepisy przeciwpożarowe wymagają, aby stałe samoczynne urządzenia gaśnicze wodne było stosowane w:",
+        options: ["budynkach służących celom gastronomicznym o liczbie miejsc powyżej 600", "budynkach, w których występuje strefa pożarowa służąca celom gastronomicznym o liczbie miejsc powyższej 600", "budynkach służących celom gastronomicznym o liczbie miejsc powyżej 300"],
+        correct: 0,
+        explanation: `§ 27. [Obiekty, w których wymagane jest stosowanie stałych urządzeń gaśniczych]
+        1. Stosowanie stałych urządzeń gaśniczych związanych na stałe z obiektem, zawierających zapas środka gaśniczego i uruchamianych samoczynnie we wczesnej fazie rozwoju pożaru, jest wymagane w:
+        1) archiwach wyznaczonych przez Naczelnego Dyrektora Archiwów Państwowych;
+        2) muzeach oraz zabytkach budowlanych, wyznaczonych przez Generalnego Konserwatora Zabytków w uzgodnieniu z Komendantem Głównym Państwowej Straży Pożarnej;
+        3) ośrodkach elektronicznego przetwarzania danych o znaczeniu krajowym.
+        2. Stosowanie stałych samoczynnych urządzeń gaśniczych wodnych jest wymagane w:
+        1) budynkach handlowych lub wystawowych:
+        a) jednokondygnacyjnych, w strefie pożarowej zakwalifikowanej do kategorii zagrożenia ludzi ZL I o powierzchni powyżej 8 000 m2,
+        b) wielokondygnacyjnych, w strefie pożarowej zakwalifikowanej do kategorii zagrożenia ludzi ZL I o powierzchni powyżej 5 000 m2;
+        2) w budynkach o liczbie miejsc służących celom gastronomicznym powyżej 600;
+        3) budynkach użyteczności publicznej wysokościowych;
+        4) budynkach zamieszkania zbiorowego wysokościowych.`
+    },
+    {
+        question: "Zgodnie z Polską Normą PN-EN 12845 „Stałe urządzenia gaśnicze. Urządzenia tryskaczowe. Projektowanie, instalowanie i konserwacja”, oddzielenie między przestrzenią chronioną urządzeniem tryskaczowym i przestrzenią niechronioną powinno mieć odporność ogniową wymaganą dla ścian i stropów oddzieleń przeciwpożarowych, przy czym nie mniejszą niż:",
+        options: ["30 min", "60 min", "120 min"],
+        correct: 1,
+        explanation: `5.3 Oddzielenie przeciwpożarowe
+        Oddzielenie między przestrzenią chronioną urządzeniem tryskaczowym i przestrzenią nie chronioną powinno mieć odporność ogniową określoną przez upoważnioną jednostkę, lecz w żadnym przypadku nie mniejszą niż 60 min. Drzwi powinny być samozamykające lub powinny zamykać się automatycznie w przypadku pożaru.
+        UWAGA Żadna część budynku (lub jego segmentu), nie chroniona urządzeniem tryskaczowym, nie powinna być usytuowana bezpośrednio poniżej części (lub segmentu) budynku chronionej urządzeniem tryskaczowym, z wyjątkami wg 5.1.1 i 5.1.2.`
+    }
+];
+
 let currentQuestionIndex = 0;
-
-async function loadQuestions() {
-    try {
-        const response = await fetch('questions.csv');
-        if (!response.ok) {
-            throw new Error('Failed to fetch questions');
-        }
-        const data = await response.text();
-        questions = parseCSV(data);
-        loadQuestion();
-    } catch (error) {
-        console.error('Error fetching questions:', error);
-        alert('Failed to fetch questions. Please try again later.');
-    }
-}
-
-function parseCSV(data) {
-    const lines = data.split('\n');
-    const result = [];
-    const headers = lines[0].split(',');
-    for (let i = 1; i < lines.length; i++) {
-        const obj = {};
-        const currentline = lines[i].split(',');
-        for (let j = 0; j < headers.length; j++) {
-            obj[headers[j].trim()] = currentline[j].trim();
-        }
-        result.push(obj);
-    }
-    return result;
-}
 
 function loadQuestion() {
     const question = questions[currentQuestionIndex];
     document.getElementById("question").textContent = question.question;
     const options = document.querySelectorAll(".option");
     options.forEach((option, index) => {
-        option.textContent = question[`option${index + 1}`];
+        option.textContent = question.options[index];
     });
     document.getElementById("question-container").classList.remove("hidden");
     document.getElementById("explanation-container").classList.add("hidden");
@@ -44,12 +47,12 @@ function loadQuestion() {
 
 function selectOption(index) {
     const question = questions[currentQuestionIndex];
-    if (index === parseInt(question.correct)) {
+    if (index === question.correct) {
         document.getElementById("explanation").textContent = question.explanation;
         document.getElementById("question-container").classList.add("hidden");
         document.getElementById("explanation-container").classList.remove("hidden");
     } else {
-        alert("Incorrect! Please try again.");
+        alert("Niepoprawna odpowiedź.");
     }
 }
 
@@ -58,7 +61,7 @@ function nextQuestion() {
         currentQuestionIndex++;
         loadQuestion();
     } else {
-        alert("You have completed the quiz!");
+        alert("Nie ma więcej pytań!");
         restartQuiz();
     }
 }
@@ -75,4 +78,4 @@ function restartQuiz() {
     loadQuestion();
 }
 
-document.addEventListener("DOMContentLoaded", loadQuestions);
+document.addEventListener("DOMContentLoaded", loadQuestion);
