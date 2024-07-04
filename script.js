@@ -36,23 +36,27 @@ let currentQuestionIndex = 0;
 
 function loadQuestion() {
     const question = questions[currentQuestionIndex];
+    document.getElementById("question-number").textContent = `Pytanie ${currentQuestionIndex + 1}`;
     document.getElementById("question").textContent = question.question;
     const options = document.querySelectorAll(".option");
     options.forEach((option, index) => {
         option.textContent = question.options[index];
+        option.style.backgroundColor = ''; // Reset button color
     });
+    adjustContainerWidth();
     document.getElementById("question-container").classList.remove("hidden");
     document.getElementById("explanation-container").classList.add("hidden");
 }
 
 function selectOption(index) {
     const question = questions[currentQuestionIndex];
+    const selectedOption = document.querySelectorAll(".option")[index];
     if (index === question.correct) {
         document.getElementById("explanation").textContent = question.explanation;
         document.getElementById("question-container").classList.add("hidden");
         document.getElementById("explanation-container").classList.remove("hidden");
     } else {
-        alert("Niepoprawna odpowiedź.");
+        selectedOption.style.backgroundColor = 'red';
     }
 }
 
@@ -76,6 +80,13 @@ function previousQuestion() {
 function restartQuiz() {
     currentQuestionIndex = 0;
     loadQuestion();
+}
+
+function adjustContainerWidth() {
+    const questionText = document.getElementById("question");
+    const length = questionText.textContent.length;
+    const newWidth = Math.min(600, Math.max(300, length * 8)); // Adjust based on length
+    questionText.style.width = `${newWidth}px`;
 }
 
 document.addEventListener("DOMContentLoaded", loadQuestion);
